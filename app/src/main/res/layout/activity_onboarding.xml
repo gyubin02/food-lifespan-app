@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OnboardingActivity">
+
+    <!-- 냉장고 이미지 -->
+    <ImageView
+        android:id="@+id/fridgeImage"
+        android:layout_width="match_parent"
+        android:layout_height="618dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/fridge_inner" />
+
+    <!-- 하단 흰색 박스 -->
+    <LinearLayout
+        android:id="@+id/whiteContainer"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_top_white_bg"
+        android:paddingHorizontal="32dp"
+        android:paddingTop="32dp"
+        android:gravity="center_horizontal">
+
+        <!-- 메인 텍스트 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Managing your fridge\njust got easier"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- 서브 텍스트 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Take a quick photo - we'll handle\neverything for you"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            android:textColor="#444444"
+            android:layout_marginBottom="40dp"/>
+
+        <!-- Next 버튼 -->
+        <android.widget.Button
+            android:id="@+id/btn_start"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Get Started"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:background="@drawable/create_account_button_bg"
+            android:backgroundTint="@null" />
+    </LinearLayout>
+</FrameLayout>
