@@ -3,16 +3,28 @@ package com.example.foodman
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.common.InputImage
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CameraActivity : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
@@ -22,16 +34,12 @@ class CameraActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
-        // 카메라 권한 확인
         if (allPermissionsGranted()) {
             startCamera()
         } else {
-            ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
-            )
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
 
-        // 촬영 버튼 클릭 이벤트
         findViewById<ImageView>(R.id.btn_capture).setOnClickListener {
             takePhoto()
         }
@@ -42,14 +50,11 @@ class CameraActivity : AppCompatActivity() {
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
 
-        // 촬영 시도
         imageCapture.takePicture(
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageCapturedCallback() {
                 override fun onCaptureSuccess(image: ImageProxy) {
-                    // 여기서 이미지 처리
-                    Toast.makeText(this@CameraActivity, "사진이 촬영되었습니다.", Toast.LENGTH_SHORT).show()
-                    image.close()
+                    processBarcodeImage(image)
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -57,6 +62,74 @@ class CameraActivity : AppCompatActivity() {
                 }
             }
         )
+    }
+
+    @OptIn(ExperimentalGetImage::class) private fun processBarcodeImage(imageProxy: ImageProxy) {
+        val mediaImage = imageProxy.image ?: return imageProxy.close()
+        val inputImage = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+        val scanner = BarcodeScanning.getClient()
+
+        scanner.process(inputImage)
+            .addOnSuccessListener { barcodes ->
+                for (barcode: Barcode in barcodes) {
+                    val rawValue = barcode.rawValue
+                    if (!rawValue.isNullOrEmpty()) {
+                        fetchFoodNameFromApi(rawValue)
+                        break
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "바코드 인식 실패", Toast.LENGTH_SHORT).show()
+            }
+            .addOnCompleteListener {
+                imageProxy.close()
+            }
+    }
+
+    private fun fetchFoodNameFromApi(barcode: String) {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://openapi.foodsafetykorea.go.kr/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val service = retrofit.create(FoodBarcodeApi::class.java)
+        val call = service.getFoodInfo(BuildConfig.FOOD_API_KEY, "I2570", 1, 5, barcode)
+
+        call.enqueue(object : Callback<FoodJsonResponse> {
+            override fun onResponse(call: Call<FoodJsonResponse>, response: Response<FoodJsonResponse>) {
+                val productName = response.body()?.C005?.row?.firstOrNull()?.PRDLST_NM
+                if (productName != null) {
+                    val ingredient = Ingredient(
+                        name = productName,
+                        category = "기타",
+                        storage = "냉장",
+                        purchaseDate = getTodayString(),
+                        expirationDate = getDefaultExpiration()
+                    )
+                    IngredientRepository.addIngredient(ingredient) { success ->
+                        if (success) Toast.makeText(this@CameraActivity, "저장 완료: $productName", Toast.LENGTH_SHORT).show()
+                        else Toast.makeText(this@CameraActivity, "저장 실패", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this@CameraActivity, "식품명을 찾을 수 없습니다", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<FoodJsonResponse>, t: Throwable) {
+                Toast.makeText(this@CameraActivity, "API 호출 실패: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun getTodayString(): String {
+        return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+    }
+
+    private fun getDefaultExpiration(): String {
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.DATE, 5)
+        return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.time)
     }
 
     private fun startCamera() {
@@ -119,4 +192,4 @@ class CameraActivity : AppCompatActivity() {
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
-} 
+}

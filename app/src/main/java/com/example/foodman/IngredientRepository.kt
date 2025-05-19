@@ -19,41 +19,41 @@ data class Ingredient(
 
 object IngredientRepository {
 
-    private val db = FirebaseFirestore.getInstance()
+    private val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val uid: String?
         get() = FirebaseAuth.getInstance().currentUser?.uid
 
     private fun ingredientCollection() =
-        uid?.let {
-            db.collection("users").document(it).collection("ingredients")
-        }
+        uid?.let { db.collection("users").document(it).collection("ingredients") }
 
     // 추가
     fun addIngredient(ingredient: Ingredient, onResult: (Boolean) -> Unit) {
+        val now = Date()
         val data = ingredient.copy(
-            createdAt = Date(),
-            updatedAt = Date()
+            createdAt = now,
+            updatedAt = now
         )
         ingredientCollection()?.add(data)
             ?.addOnSuccessListener { onResult(true) }
             ?.addOnFailureListener { onResult(false) }
+            ?: onResult(false)
     }
 
-    // 조회
+    // 전체 조회
     fun getAllIngredients(onResult: (List<Pair<String, Ingredient>>) -> Unit) {
         ingredientCollection()
             ?.orderBy("expirationDate", Query.Direction.ASCENDING)
             ?.get()
             ?.addOnSuccessListener { result ->
                 val list = result.documents.mapNotNull { doc ->
-                    val ing = doc.toObject(Ingredient::class.java)
-                    if (ing != null) doc.id to ing else null
+                    doc.toObject(Ingredient::class.java)?.let { doc.id to it }
                 }
                 onResult(list)
             }
             ?.addOnFailureListener {
                 onResult(emptyList())
             }
+            ?: onResult(emptyList())
     }
 
     // 수정
@@ -63,6 +63,7 @@ object IngredientRepository {
             ?.set(data)
             ?.addOnSuccessListener { onResult(true) }
             ?.addOnFailureListener { onResult(false) }
+            ?: onResult(false)
     }
 
     // 삭제
@@ -71,5 +72,6 @@ object IngredientRepository {
             ?.delete()
             ?.addOnSuccessListener { onResult(true) }
             ?.addOnFailureListener { onResult(false) }
+            ?: onResult(false)
     }
 }
