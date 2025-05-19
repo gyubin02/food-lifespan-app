@@ -21,18 +21,21 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class CameraActivity : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private var imageCapture: ImageCapture? = null
+    private lateinit var scanMode: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
+
+        scanMode = intent.getStringExtra("mode") ?: "barcode"
 
         if (allPermissionsGranted()) {
             startCamera()
@@ -54,7 +57,12 @@ class CameraActivity : AppCompatActivity() {
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageCapturedCallback() {
                 override fun onCaptureSuccess(image: ImageProxy) {
-                    processBarcodeImage(image)
+                    if (scanMode == "barcode") {
+                        processBarcodeImage(image)
+                    } else {
+                        Toast.makeText(this@CameraActivity, "해당 모드의 처리는 아직 구현되지 않았습니다.", Toast.LENGTH_SHORT).show()
+                        image.close()
+                    }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -64,7 +72,8 @@ class CameraActivity : AppCompatActivity() {
         )
     }
 
-    @OptIn(ExperimentalGetImage::class) private fun processBarcodeImage(imageProxy: ImageProxy) {
+    @OptIn(ExperimentalGetImage::class)
+    private fun processBarcodeImage(imageProxy: ImageProxy) {
         val mediaImage = imageProxy.image ?: return imageProxy.close()
         val inputImage = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
         val scanner = BarcodeScanning.getClient()

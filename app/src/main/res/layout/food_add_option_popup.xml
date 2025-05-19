@@ -43,28 +43,29 @@
     </LinearLayout>
 
     <!-- Barcode -->
-    <LinearLayout
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_margin="10dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@drawable/bg_option_button">
+        <LinearLayout
+            android:id="@+id/scan_barcode_card"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/bg_option_button"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/scan_barcode"
-            android:contentDescription="Barcode" />
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="Barcode"
+                android:src="@drawable/scan_barcode" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Barcode"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp"/>
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Barcode"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
     <!-- Receipt -->
     <LinearLayout

@@ -15,13 +15,9 @@ class FridgeDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fridge_detail)
 
-        // 전달받은 title 값 가져오기
         val title = intent.getStringExtra("title") ?: ""
-
-        // title 값 설정
         findViewById<TextView>(R.id.text_title).text = title
 
-        // 우측 하단 + 버튼 클릭 이벤트
         findViewById<ImageView>(R.id.btn_add_food).setOnClickListener {
             showFoodAddOptionPopup()
         }
@@ -31,11 +27,7 @@ class FridgeDetailActivity : AppCompatActivity() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.food_add_option_popup)
-        
-        // Dialog의 배경을 투명하게 설정
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        
-        // Dialog를 화면 전체에 표시
         dialog.window?.setLayout(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT
@@ -44,15 +36,27 @@ class FridgeDetailActivity : AppCompatActivity() {
         // Scan Food 버튼 클릭 이벤트
         dialog.findViewById<LinearLayout>(R.id.scan_food_card).setOnClickListener {
             dialog.dismiss()
-            startActivity(Intent(this, CameraActivity::class.java))
+            val intent = Intent(this, CameraActivity::class.java)
+            intent.putExtra("mode", "food")
+            startActivity(intent)
+        }
+
+        // Scan Barcode 버튼 클릭 이벤트
+        dialog.findViewById<LinearLayout>(R.id.scan_barcode_card).setOnClickListener {
+            dialog.dismiss()
+            val intent = Intent(this, CameraActivity::class.java)
+            intent.putExtra("mode", "barcode")
+            startActivity(intent)
         }
 
         // Scan Receipt 버튼 클릭 이벤트
         dialog.findViewById<LinearLayout>(R.id.scan_receipt_card).setOnClickListener {
             dialog.dismiss()
-            startActivity(Intent(this, CameraActivity::class.java))
+            val intent = Intent(this, CameraActivity::class.java)
+            intent.putExtra("mode", "receipt")
+            startActivity(intent)
         }
-        
+
         dialog.show()
     }
-} 
+}
