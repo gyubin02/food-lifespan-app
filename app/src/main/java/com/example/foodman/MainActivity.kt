@@ -23,12 +23,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         try {
             setContentView(R.layout.activity_main)
-
-            loadFridgesFromFirestore() // Firebase에서 냉장고 목록 불러오기
-
-            findViewById<ImageView>(R.id.fab_add).setOnClickListener {
-                showAddPopup()
-            }
+            loadFridgesFromFirestore()
+            findViewById<ImageView>(R.id.fab_add).setOnClickListener { showAddPopup() }
         } catch (e: Exception) {
             Log.e("MainActivity", "초기화 중 오류 발생: ${e.message}")
             Toast.makeText(this, "앱 초기화 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
@@ -37,8 +33,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadFridgesFromFirestore() {
         FridgeRepository.getAllFridges { fridgeList ->
-            fridgeList.forEach { (_, fridge) ->
-                addItemCard(fridge.name, fridge.type)
+            fridgeList.forEach { (fridgeId, fridge) ->
+                addItemCard(fridgeId, fridge.name, fridge.type)
             }
         }
     }
@@ -97,7 +93,12 @@ class MainActivity : AppCompatActivity() {
                 val fridge = Fridge(name = name, type = type)
                 FridgeRepository.addFridge(fridge) { success ->
                     if (success) {
-                        addItemCard(name, type)
+                        FridgeRepository.getAllFridges { fridgeList ->
+                            val matched = fridgeList.find { it.second.name == name && it.second.type == type }
+                            matched?.let { (fridgeId, _) ->
+                                addItemCard(fridgeId, name, type)
+                            }
+                        }
                         Toast.makeText(this, "$type 추가됨", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(this, "저장 실패", Toast.LENGTH_SHORT).show()
@@ -112,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun addItemCard(name: String, type: String) {
+    private fun addItemCard(fridgeId: String, name: String, type: String) {
         val inflater = LayoutInflater.from(this)
         val cardView = inflater.inflate(R.layout.item_card, null)
 
@@ -127,6 +128,7 @@ class MainActivity : AppCompatActivity() {
         cardView.setOnClickListener {
             val intent = Intent(this, FridgeDetailActivity::class.java)
             intent.putExtra("title", name)
+            intent.putExtra("fridgeId", fridgeId)
             startActivity(intent)
         }
 

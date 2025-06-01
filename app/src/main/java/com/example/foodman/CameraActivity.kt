@@ -13,14 +13,12 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -30,12 +28,19 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private var imageCapture: ImageCapture? = null
     private lateinit var scanMode: String
+    private lateinit var fridgeId: String
+    private var isProcessingBarcode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
         scanMode = intent.getStringExtra("mode") ?: "barcode"
+        fridgeId = intent.getStringExtra("fridgeId") ?: run {
+            Toast.makeText(this, "냉장고 ID 누락", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
         if (allPermissionsGranted()) {
             startCamera()
@@ -82,7 +87,8 @@ class CameraActivity : AppCompatActivity() {
             .addOnSuccessListener { barcodes ->
                 for (barcode: Barcode in barcodes) {
                     val rawValue = barcode.rawValue
-                    if (!rawValue.isNullOrEmpty()) {
+                    if (!rawValue.isNullOrEmpty() && !isProcessingBarcode) {
+                        isProcessingBarcode = true
                         fetchFoodNameFromApi(rawValue)
                         break
                     }
@@ -97,31 +103,35 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun fetchFoodNameFromApi(barcode: String) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://openapi.foodsafetykorea.go.kr/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val service = retrofit.create(FoodBarcodeApi::class.java)
-        val call = service.getFoodInfo(BuildConfig.FOOD_API_KEY, "I2570", 1, 5, barcode)
+        val call = ApiClient.foodBarcodeService.getFoodInfo(BuildConfig.FOOD_API_KEY, barcode)
 
         call.enqueue(object : Callback<FoodJsonResponse> {
             override fun onResponse(call: Call<FoodJsonResponse>, response: Response<FoodJsonResponse>) {
-                val productName = response.body()?.C005?.row?.firstOrNull()?.PRDLST_NM
-                if (productName != null) {
+                if (!response.isSuccessful) {
+                    Toast.makeText(this@CameraActivity, "API 응답 실패: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                val items = response.body()?.result?.row.orEmpty()
+                Log.d("API_DEBUG", "응답 바코드 항목: ${items.joinToString { "${it.BRCD_NO}: ${it.PRDT_NM}" }}")
+
+                val matchedItem = items.firstOrNull { it.BRCD_NO == barcode }
+
+                if (matchedItem != null) {
+                    val productName = matchedItem.PRDT_NM ?: matchedItem.PRDLST_NM ?: "이름없음"
                     val ingredient = Ingredient(
                         name = productName,
-                        category = "기타",
+                        category = matchedItem.HRNK_PRDLST_NM ?: "기타",
                         storage = "냉장",
                         purchaseDate = getTodayString(),
                         expirationDate = getDefaultExpiration()
                     )
-                    IngredientRepository.addIngredient(ingredient) { success ->
-                        if (success) Toast.makeText(this@CameraActivity, "저장 완료: $productName", Toast.LENGTH_SHORT).show()
-                        else Toast.makeText(this@CameraActivity, "저장 실패", Toast.LENGTH_SHORT).show()
+                    IngredientRepository.addIngredient(fridgeId, ingredient) { success ->
+                        val msg = if (success) "저장 완료: $productName" else "저장 실패"
+                        Toast.makeText(this@CameraActivity, msg, Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this@CameraActivity, "식품명을 찾을 수 없습니다", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CameraActivity, "일치하는 바코드 상품 없음", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -131,9 +141,9 @@ class CameraActivity : AppCompatActivity() {
         })
     }
 
-    private fun getTodayString(): String {
-        return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-    }
+
+    private fun getTodayString(): String =
+        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
     private fun getDefaultExpiration(): String {
         val cal = Calendar.getInstance()
@@ -147,11 +157,9 @@ class CameraActivity : AppCompatActivity() {
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(findViewById<PreviewView>(R.id.previewView).surfaceProvider)
-                }
+            val preview = Preview.Builder().build().also {
+                it.setSurfaceProvider(findViewById<PreviewView>(R.id.previewView).surfaceProvider)
+            }
 
             imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)

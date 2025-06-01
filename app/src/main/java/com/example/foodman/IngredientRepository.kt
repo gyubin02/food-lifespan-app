@@ -18,30 +18,25 @@ data class Ingredient(
 )
 
 object IngredientRepository {
-
     private val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val uid: String?
         get() = FirebaseAuth.getInstance().currentUser?.uid
 
-    private fun ingredientCollection() =
-        uid?.let { db.collection("users").document(it).collection("ingredients") }
+    // 냉장고 ID에 따른 ingredients 컬렉션 참조
+    private fun ingredientCollection(fridgeId: String) =
+        uid?.let { db.collection("users").document(it).collection("fridges").document(fridgeId).collection("ingredients") }
 
-    // 추가
-    fun addIngredient(ingredient: Ingredient, onResult: (Boolean) -> Unit) {
+    fun addIngredient(fridgeId: String, ingredient: Ingredient, onResult: (Boolean) -> Unit) {
         val now = Date()
-        val data = ingredient.copy(
-            createdAt = now,
-            updatedAt = now
-        )
-        ingredientCollection()?.add(data)
+        val data = ingredient.copy(createdAt = now, updatedAt = now)
+        ingredientCollection(fridgeId)?.add(data)
             ?.addOnSuccessListener { onResult(true) }
             ?.addOnFailureListener { onResult(false) }
             ?: onResult(false)
     }
 
-    // 전체 조회
-    fun getAllIngredients(onResult: (List<Pair<String, Ingredient>>) -> Unit) {
-        ingredientCollection()
+    fun getAllIngredients(fridgeId: String, onResult: (List<Pair<String, Ingredient>>) -> Unit) {
+        ingredientCollection(fridgeId)
             ?.orderBy("expirationDate", Query.Direction.ASCENDING)
             ?.get()
             ?.addOnSuccessListener { result ->
@@ -56,19 +51,17 @@ object IngredientRepository {
             ?: onResult(emptyList())
     }
 
-    // 수정
-    fun updateIngredient(id: String, updated: Ingredient, onResult: (Boolean) -> Unit) {
+    fun updateIngredient(fridgeId: String, id: String, updated: Ingredient, onResult: (Boolean) -> Unit) {
         val data = updated.copy(updatedAt = Date())
-        ingredientCollection()?.document(id)
+        ingredientCollection(fridgeId)?.document(id)
             ?.set(data)
             ?.addOnSuccessListener { onResult(true) }
             ?.addOnFailureListener { onResult(false) }
             ?: onResult(false)
     }
 
-    // 삭제
-    fun deleteIngredient(id: String, onResult: (Boolean) -> Unit) {
-        ingredientCollection()?.document(id)
+    fun deleteIngredient(fridgeId: String, id: String, onResult: (Boolean) -> Unit) {
+        ingredientCollection(fridgeId)?.document(id)
             ?.delete()
             ?.addOnSuccessListener { onResult(true) }
             ?.addOnFailureListener { onResult(false) }
