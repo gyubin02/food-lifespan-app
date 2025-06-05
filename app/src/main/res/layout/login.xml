@@ -28,13 +28,14 @@
             android:layout_marginEnd="8dp" />
 
         <EditText
+            android:id="@+id/edit_email"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@null"
             android:hint="User ID"
             android:textColorHint="#B0B0B0"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
     </LinearLayout>
 
     <!-- Password 입력 -->
@@ -55,14 +56,15 @@
             android:layout_marginEnd="8dp" />
 
         <EditText
+            android:id="@+id/edit_password"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@null"
             android:hint="Password"
             android:inputType="textPassword"
             android:textColorHint="#B0B0B0"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
     </LinearLayout>
 
     <!-- Log in 버튼 -->
@@ -75,6 +77,18 @@
         android:textColor="#000000"
         android:textStyle="bold"
         android:textSize="18sp"/>
+
+    <!-- Log in 버튼 -->
+    <android.widget.Button
+        android:id="@+id/signup_button"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:text="Signup"
+        android:background="@drawable/signup_button_background"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:textSize="18sp"/>
+
 </LinearLayout>
 
 
