@@ -16,14 +16,17 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
             setContentView(R.layout.activity_main)
-
+            //테스트
+            //testImageAnalysisRepository()
             loadFridgesFromFirestore() // Firebase에서 냉장고 목록 불러오기
 
             findViewById<ImageView>(R.id.fab_add).setOnClickListener {
@@ -139,4 +142,21 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<LinearLayout>(R.id.container_layout).addView(cardView, layoutParams)
     }
+
+    //테스트
+
+    private fun testImageAnalysisRepository() {
+        val base64Image = ImageBase64Util.base64FromAssetJpg(this, "image_test2.jpg", withPrefix = true) // 테스트용 이미지 문자열
+
+        lifecycleScope.launch {
+            try {
+                if(base64Image!=null){
+                val result = ImageAnalysisRepository.analyzeImageAndGetExpiryDateMap(base64Image)
+                Log.d("GeminiTest", "결과: $result")}
+            } catch (e: Exception) {
+                Log.e("GeminiTest", "에러: ${e.message}", e)
+            }
+        }
+    }
+
 }

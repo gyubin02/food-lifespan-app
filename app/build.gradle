@@ -52,7 +52,8 @@ dependencies {
     implementation libs.firebase.firestore.ktx
     implementation 'com.google.mlkit:barcode-scanning:17.3.0'
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
-    implementation 'com.squareup.retrofit2:converter-gson:3.0.0' //  JSON 전용 컨버터
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
+    implementation libs.firebase.database.ktx//  JSON 전용 컨버터
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
