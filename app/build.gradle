@@ -72,4 +72,7 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
     implementation "androidx.camera:camera-view:$camerax_version"
 
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
+    implementation libs.firebase.database.ktx//  JSON 전용 컨버터
+
 }

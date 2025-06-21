@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/rounded_bg"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="24dp" >
+
+    <EditText
+        android:id="@+id/edit_name"
+        android:hint="식재료명"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"/>
+
+    <EditText
+        android:id="@+id/edit_expiration"
+        android:hint="유통기한 (예: 2025-06-30)"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        android:textColor="#000000"/>
+
+    <EditText
+        android:id="@+id/edit_extra"
+        android:hint="기타 정보"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"/>
+</LinearLayout>
