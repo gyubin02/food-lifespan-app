@@ -1,9 +1,11 @@
 package com.example.foodman
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.EditText
@@ -15,6 +17,11 @@ import androidx.appcompat.app.AppCompatActivity
 
 class FridgeDetailActivity : AppCompatActivity() {
     private lateinit var fridgeId: String
+
+    override fun onResume() {
+        super.onResume()
+        loadIngredients()  //
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +46,33 @@ class FridgeDetailActivity : AppCompatActivity() {
             showFoodAddOptionPopup()
         }
     }
+    fun TextView.setSafeTextOrGone(value: String?, label: String? = null) {
+        if (value.isNullOrBlank()) {
+            this.visibility = View.GONE
+        } else {
+            this.visibility = View.VISIBLE
+            this.text = if (label == null) value else "$label$value"
+        }
+    }
+
+    private fun showDeleteDialog(ingredientId: String, foodName: String) {
+        AlertDialog.Builder(this)
+            .setTitle("식재료 삭제")
+            .setMessage("$foodName 식재료를 삭제하시겠습니까?")
+            .setPositiveButton("삭제") { _, _ ->
+                IngredientRepository.deleteIngredient(fridgeId, ingredientId) { success ->
+                    if (success) {
+                        Toast.makeText(this, "삭제되었습니다", Toast.LENGTH_SHORT).show()
+                        loadIngredients()
+                    } else {
+                        Toast.makeText(this, "삭제 실패", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
 
     private fun loadIngredients() {
         IngredientRepository.getAllIngredients(fridgeId) { ingredients ->
@@ -51,10 +85,27 @@ class FridgeDetailActivity : AppCompatActivity() {
             }
 
             val inflater = LayoutInflater.from(this)
-            for ((_, ingredient) in ingredients) {
-                val view = inflater.inflate(R.layout.item_food, container, false)
+            for ((ingredientId, ingredient) in ingredients) {
+                /*val view = inflater.inflate(R.layout.item_food, container, false)
                 view.findViewById<TextView>(R.id.text_food_name).text = ingredient.name
                 view.findViewById<EditText>(R.id.edit_exp_date).setText("~${ingredient.expirationDate}")
+                container.addView(view)*/
+
+                val view = inflater.inflate(R.layout.item_food, container, false)
+                // 식품명
+                view.findViewById<TextView>(R.id.text_food_name).setSafeTextOrGone(ingredient.name)
+                // 유통기한 (날짜 앞에 ~ 붙이기)
+                view.findViewById<TextView>(R.id.textexp_date).setSafeTextOrGone(ingredient.expirationDate, "~")
+                // 카테고리, 보관, 구매일, 등등
+                view.findViewById<TextView>(R.id.textcategory).setSafeTextOrGone(ingredient.category, "기타 정보: ")
+                view.findViewById<TextView>(R.id.textstorage).setSafeTextOrGone(ingredient.storage, "보관: ")
+                view.findViewById<TextView>(R.id.textpurchase_date).setSafeTextOrGone(ingredient.purchaseDate, "구매일: ")
+
+
+                view.setOnClickListener {
+                    showDeleteDialog(ingredientId, ingredient.name)
+                }
+
                 container.addView(view)
             }
         }

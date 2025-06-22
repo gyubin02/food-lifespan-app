@@ -1,40 +1,76 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/bg_food_item"
+    android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="16dp"
-    android:layout_marginTop="12dp"
-    android:background="@drawable/bg_food_item">
+    android:layout_marginTop="12dp">
 
-    <TextView
-        android:id="@+id/text_food_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Egg"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#000000"/>
-
+    <!-- 상단: 식품명(왼쪽), 유통/소비기한(오른쪽) -->
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/text_food_name"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="유통/소비 기한"
-            android:textColor="#8E8E93"
-            android:textSize="12sp" />
+            android:text="Egg"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
 
-        <EditText
-            android:id="@+id/edit_exp_date"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:text="~12/31/2025"
-            android:textSize="16sp"
-            android:textColor="#000000"/>
+            android:gravity="end">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="유통/소비 기한"
+                android:textColor="#8E8E93"
+                android:textSize="12sp"
+                android:gravity="end"/>
+
+            <TextView
+                android:id="@+id/textexp_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="~12/31/2025"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:gravity="end"/>
+        </LinearLayout>
     </LinearLayout>
+
+    <!-- 아래: 기타 정보 (카테고리, 보관방식, 구매일 등) -->
+    <TextView
+        android:id="@+id/textcategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="기타 정보: 달걀"
+        android:textColor="#555"
+        android:layout_marginTop="8dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textstorage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="보관: 냉장"
+        android:textColor="#8E8E93"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textpurchase_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="구매일: 2024-06-01"
+        android:textColor="#8E8E93"
+        android:visibility="gone" />
 </LinearLayout>

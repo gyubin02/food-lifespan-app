@@ -39,7 +39,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="냉장고 이름 입력하기"
+                android:hint="냉장고/선반 이름 입력하기"
                 android:textColor="#7F7F7F"
                 android:textSize="16sp"
                 android:maxLength="12"
