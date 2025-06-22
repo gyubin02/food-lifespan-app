@@ -127,7 +127,17 @@ class CameraActivity : AppCompatActivity() {
                         expirationDate = getDefaultExpiration()
                     )
                     IngredientRepository.addIngredient(fridgeId, ingredient) { success ->
-                        val msg = if (success) "저장 완료: $productName" else "저장 실패"
+                        val msg = if (success) {
+                            // 알림 예약 등록
+                            WorkManagerScheduler.scheduleExpirationAlerts(
+                                context = this@CameraActivity,
+                                foodName = ingredient.name,
+                                expirationDate = ingredient.expirationDate
+                            )
+                            "저장 완료: $productName"
+                        } else {
+                            "저장 실패"
+                        }
                         Toast.makeText(this@CameraActivity, msg, Toast.LENGTH_SHORT).show()
                     }
                 } else {

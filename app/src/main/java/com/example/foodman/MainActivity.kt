@@ -16,12 +16,26 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
+            val testData = workDataOf(
+                "foodName" to "🔔테스트 식재료",
+                "daysBefore" to 0  // 0이면 오늘, 즉시 알림
+            )
+
+            val testRequest = OneTimeWorkRequestBuilder<ExpirationAlertWorker>()
+                .setInputData(testData)
+                .build()
+
+            WorkManager.getInstance(this).enqueue(testRequest)
+
             setContentView(R.layout.activity_main)
             loadFridgesFromFirestore()
             findViewById<ImageView>(R.id.fab_add).setOnClickListener { showAddPopup() }
