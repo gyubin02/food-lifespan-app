@@ -13,7 +13,8 @@
         android:layout_weight="1"
         android:text="Egg"
         android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textColor="#000000"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -23,7 +24,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="exp date"
+            android:text="유통/소비 기한"
             android:textColor="#8E8E93"
             android:textSize="12sp" />
 
@@ -33,6 +34,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:text="~12/31/2025"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:textColor="#000000"/>
     </LinearLayout>
 </LinearLayout>

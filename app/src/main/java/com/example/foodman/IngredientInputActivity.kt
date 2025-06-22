@@ -30,6 +30,10 @@ class IngredientInputActivity : AppCompatActivity() {
             container.addView(rowView)
         }
 
+        findViewById<ImageView>(R.id.btn_back).setOnClickListener {
+            finish()
+        }
+
         // [2] "식재료 추가하기" 버튼
         btnAddFood.setOnClickListener {
             val rowView = LayoutInflater.from(this).inflate(R.layout.item_ingredient_input, container, false)
@@ -53,6 +57,13 @@ class IngredientInputActivity : AppCompatActivity() {
                     )
                 }
             }
+            if (ingredientMap.isEmpty()) {
+                Toast.makeText(this, "입력된 식재료가 없습니다.", Toast.LENGTH_SHORT).show()
+                // finish()  // ← 만약 저장 없이 화면 닫고 싶으면 주석 해제
+                return@setOnClickListener
+            }
+
+
 
             // IngredientRepository로 저장
             var saveCount = 0

@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
@@ -23,15 +24,52 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         try {
             setContentView(R.layout.activity_main)
-            loadFridgesFromFirestore()
+            // 최초 진입 시 HomeFragment 표시
+            if (savedInstanceState == null) {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, HomeFragment())
+                    .commit()
+            }
+
+            findViewById<ImageView>(R.id.bottom_home).setOnClickListener {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, HomeFragment())
+                    .commit()
+            }
+            findViewById<ImageView>(R.id.bottom_user).setOnClickListener {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, ProfileFragment())
+                    .commit()
+            }
+
+
+
+            /*loadFridgesFromFirestore()
             findViewById<ImageView>(R.id.fab_add).setOnClickListener { showAddPopup() }
+            //@@@@@@@@@@@@@@수정@@@@@@@@@@@@@@
+            // 하단 네비게이션 버튼 클릭 리스너 설정
+            findViewById<ImageView>(R.id.bottom_home).setOnClickListener {
+                removeAllFragments() // 홈 버튼: Fragment 모두 제거 → 기존 화면
+            }
+            findViewById<ImageView>(R.id.bottom_user).setOnClickListener {
+                showFragment(ProfileFragment()) // 사람 버튼: UserFragment 띄우기
+            }*/
+            // (알람 버튼 추가 시 showFragment(AlarmFragment()) 등으로 가능)
+
+
+            //수정@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
         } catch (e: Exception) {
             Log.e("MainActivity", "초기화 중 오류 발생: ${e.message}")
             Toast.makeText(this, "앱 초기화 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun loadFridgesFromFirestore() {
+
+
+
+
+    /*private fun loadFridgesFromFirestore() {
         FridgeRepository.getAllFridges { fridgeList ->
             fridgeList.forEach { (fridgeId, fridge) ->
                 addItemCard(fridgeId, fridge.name, fridge.type)
@@ -141,4 +179,21 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<LinearLayout>(R.id.container_layout).addView(cardView, layoutParams)
     }
+    //수정@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    private fun showFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null) // 뒤로가기 버튼 시 popBackStack됨
+            .commit()
+    }
+
+    // 모든 Fragment 제거하고 기존 메인 UI(카드 목록 등)만 남기기
+    private fun removeAllFragments() {
+        val fm = supportFragmentManager
+        for (i in 0 until fm.backStackEntryCount) {
+            fm.popBackStack()
+        }
+        // 또는 아래도 가능:
+        // supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    }*/
 }

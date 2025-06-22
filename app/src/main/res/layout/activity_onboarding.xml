@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="618dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/fridge_inner" />
+        android:src="@drawable/fridge_inner"
+        android:layout_margin="24dp"/>
 
     <!-- 하단 흰색 박스 -->
     <LinearLayout
@@ -29,7 +30,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Managing your fridge\njust got easier"
+            android:text="냉장고 속 식재료들의\n 유통기한을 손쉽게!"
             android:textAlignment="center"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -40,7 +41,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Take a quick photo - we'll handle\neverything for you"
+            android:text="한 장의 사진으로!\n"
             android:textAlignment="center"
             android:textSize="14sp"
             android:textColor="#444444"
@@ -51,7 +52,7 @@
             android:id="@+id/btn_start"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="Get Started"
+            android:text="시작하기"
             android:textColor="#000000"
             android:textStyle="bold"
             android:textSize="16sp"

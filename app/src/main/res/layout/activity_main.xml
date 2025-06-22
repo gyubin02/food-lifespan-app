@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F9F9F9"
-    android:id="@+id/main">
+    android:background="#F9F9F9">
 
     <!-- 상단 바 -->
     <LinearLayout
@@ -14,7 +12,6 @@
         android:orientation="horizontal"
         android:padding="16dp"
         android:gravity="center_vertical"
-        android:layout_alignParentTop="true"
         android:background="@android:color/white">
 
         <ImageView
@@ -32,27 +29,16 @@
             android:textSize="20sp"
             android:layout_marginStart="8dp" />
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/bell"
-            android:contentDescription="Notification" />
     </LinearLayout>
 
-    <!-- 카드 컨테이너 (ScrollView 포함) -->
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_below="@id/top_bar"
+    <!-- Fragment를 위한 컨테이너 -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:id="@+id/container_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"/>
-    </ScrollView>
+        android:layout_below="@id/top_bar"
+        android:layout_above="@id/bottom_nav"
+        android:layout_marginBottom="80dp"/>
 
     <!-- 하단 네비게이션 -->
     <LinearLayout
@@ -66,29 +52,36 @@
         android:elevation="8dp"
         android:gravity="center">
 
+        <!-- 홈 -->
         <ImageView
+            android:id="@+id/bottom_home"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/home_icon"
             android:contentDescription="Home"
             android:layout_weight="1" />
 
+        <!-- 알림 -->
         <ImageView
+            android:id="@+id/bottom_bell"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/bell"
+            android:contentDescription="Notification"
+            android:layout_weight="1" />
+
+        <!-- 사람 -->
+        <ImageView
+            android:id="@+id/bottom_user"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/user"
             android:contentDescription="User"
             android:layout_weight="1" />
-
-        <View
-            android:layout_width="60dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
     </LinearLayout>
 
     <!-- 플로팅 액션 버튼 -->
-    <ImageView
+    <!--<ImageView
         android:id="@+id/fab_add"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -96,10 +89,9 @@
         android:contentDescription="Add"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="35dp"
+        android:layout_marginBottom="80dp"
         android:layout_marginEnd="50dp"
         android:background="@android:color/transparent"
-        android:elevation="8dp" />
+        android:elevation="8dp" />-->
 
 </RelativeLayout>
-

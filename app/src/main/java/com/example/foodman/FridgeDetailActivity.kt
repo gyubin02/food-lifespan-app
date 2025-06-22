@@ -20,6 +20,10 @@ class FridgeDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fridge_detail)
 
+        findViewById<ImageView>(R.id.btn_back).setOnClickListener {
+            finish() // 현재 액티비티 종료(이전으로)
+        }
+
         fridgeId = intent.getStringExtra("fridgeId") ?: run {
             Toast.makeText(this, "냉장고 ID가 없습니다", Toast.LENGTH_SHORT).show()
             finish()
@@ -82,13 +86,26 @@ class FridgeDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        dialog.findViewById<LinearLayout>(R.id.scan_receipt_card).setOnClickListener {
+        dialog.findViewById<LinearLayout>(R.id.input_text_card).setOnClickListener {
+            dialog.dismiss()
+            // 1. 빈 ArrayList 준비
+            val foodNames = arrayListOf<String>()
+            val expirations = arrayListOf<String>()
+            // 2. Intent로 IngredientInputActivity 호출
+            val intent = Intent(this, IngredientInputActivity::class.java)
+            intent.putExtra("fridgeId", fridgeId)
+            intent.putStringArrayListExtra("food_names", foodNames)
+            intent.putStringArrayListExtra("expirations", expirations)
+            startActivity(intent)
+        }
+        //영수증 인식 기능 삭제@@@@@@@@@@@@@@@@@@@@@@
+        /*dialog.findViewById<LinearLayout>(R.id.scan_receipt_card).setOnClickListener {
             dialog.dismiss()
             val intent = Intent(this, CameraActivity::class.java)
             intent.putExtra("mode", "receipt")
             intent.putExtra("fridgeId", fridgeId)
             startActivity(intent)
-        }
+        }*/
 
         dialog.show()
     }

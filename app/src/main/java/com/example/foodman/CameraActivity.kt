@@ -251,7 +251,7 @@ class CameraActivity : AppCompatActivity() {
                     val base64Image = bitmapToBase64(resizedBitmap)
                     val result = ImageAnalysisRepository.analyzeImageAndGetExpiryDateMap(base64Image)
                     Log.d("FoodAnalysis", "서버 응답 결과: $result")
-                    Toast.makeText(this@CameraActivity, "분석 완료", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CameraActivity, "분석 완료. 잠시 기다려 주세요.", Toast.LENGTH_SHORT).show()
                     // 필요하다면 result(Map) 활용 코드 추가@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                     // 1. Map → ArrayList 변환
                     val foodNames = ArrayList(result.keys)

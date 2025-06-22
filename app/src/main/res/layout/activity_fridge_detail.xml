@@ -24,16 +24,20 @@
                 android:src="@drawable/arrow_back"
                 android:background="@drawable/bg_back_circle"
                 android:padding="8dp"
-                android:contentDescription="Back" />
+                android:contentDescription="Back"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/btn_back"/>
 
             <TextView
                 android:id="@+id/text_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Refri"
+                android:text="새로운 냉장고"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:layout_marginStart="16dp"/>
+                android:layout_marginStart="16dp"
+                android:textColor="#000000"/>
         </LinearLayout>
 
         <!-- 음식 목록 -->

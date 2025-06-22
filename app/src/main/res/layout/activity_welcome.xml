@@ -28,7 +28,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Get the life you want!"
+            android:text="시작해보세요!"
             android:textAlignment="center"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -40,7 +40,7 @@
             android:id="@+id/btn_create_account"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="Create account"
+            android:text="계정 생성하기"
             android:textColor="#000000"
             android:textStyle="bold"
             android:textSize="16sp"
@@ -52,7 +52,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Already have an account?"
+            android:text="이미 계정이 존재하나요?"
             android:textColor="#000000"
             android:textSize="14sp"
             android:layout_marginBottom="8dp"/>
@@ -61,7 +61,7 @@
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="Login"
+            android:text="로그인"
             android:textColor="#000000"
             android:textStyle="bold"
             android:textSize="16sp"

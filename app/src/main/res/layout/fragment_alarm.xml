@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9F9F9">
+
+    <LinearLayout
+        android:id="@+id/alarm_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 예시 알림
+        <TextView
+            android:id="@+id/alarm_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="유통기한이 임박한 상품이 있습니다."
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:background="#FFF"
+            android:padding="12dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="12dp"/>-->
+
+        <!-- 나중에 반복문으로 냉장고/식품별 알림 카드로 쌓으면 됨 -->
+
+    </LinearLayout>
+</ScrollView>
+
+

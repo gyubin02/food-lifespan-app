@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Refrigerator"
+            android:text="냉장고 추가"
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_gravity="center"
@@ -58,7 +58,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Shelf"
+            android:text="선반 추가"
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_gravity="center"
